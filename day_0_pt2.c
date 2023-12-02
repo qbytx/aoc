@@ -51,15 +51,6 @@ Vector getVector(const VectorArray *array, size_t index) {
   }
 }
 
-int newVector(const VectorArray *array, int a, int b) {
-  for (int i = 0; i < array->size; i += 1) {
-    if (array->list[i].a == a && array->list[i].b == b) {
-      return -1;
-    }
-  }
-  return 1;
-}
-
 void freeArray(VectorArray *array) {
   free(array->list);
   array->list = NULL;
