@@ -31,7 +31,7 @@ int main(void) {
     SYM_B
   };
   
-  char * fileName = "./input.txt";
+  char * fileName = "./cubes.txt";
   FILE * fp = fopen(fileName, "r");
 
   if (fp == NULL) {
