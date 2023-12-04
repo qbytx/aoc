@@ -7,12 +7,6 @@
 #define VECTOR_ARRAY_SIZE 8
 
 typedef struct {
-  char *digits;
-  int x;
-  int y;
-} NumberVector;
-
-typedef struct {
   int x;
   int y;
 } Vector;
@@ -71,26 +65,6 @@ VectorArray createVectorArray(int x, int y) {
 }
 
 void freeVectorArray(VectorArray *vectorArray) { free(vectorArray->array); }
-
-NumberVector createNumberVector(int x, int y, char *s) {
-  NumberVector vector;
-  vector.x = x;
-  vector.y = y;
-
-  int length = strlen(s);
-
-  vector.digits = (char *)malloc((length + 1) * sizeof(char));
-
-  if (vector.digits == NULL) {
-    printf("Error initializing number vector");
-    exit(EXIT_FAILURE);
-  }
-
-  vector.digits[length] = '\0';
-  strcpy(vector.digits, s);
-
-  return vector;
-}
 
 ListString createList() {
   ListString list;
@@ -155,7 +129,11 @@ int isSymbol(char c) {
   }
 }
 
-NumberVector search(Vector *vector, char **characters) {
+int isChecked(int **checked, int x, int y) { return checked[x][y]; }
+
+void setChecked(int **checked, int x, int y) { checked[x][y] = 1; }
+
+int search(Vector *vector, char **characters, int **checked) {
   char *str = characters[vector->y];
   int a, b, len;
   a = vector->x;
@@ -170,14 +148,14 @@ NumberVector search(Vector *vector, char **characters) {
     b++;
   }
 
-  printf("a: (%c) - %d\n", str[a], a);
-  printf("b: (%c) - %d\n", str[b], b);
+  if (isChecked(checked, a, b) == 1) {
+    return 0;
+  } else {
+    setChecked(checked, a, b);
+  }
 
   int length = b - a + 1;
 
-  printf("%d length\n", length);
-
-  // Allocate memory for the substring (+1 for the null terminator)
   char *substring = (char *)malloc((length + 1) * sizeof(char));
 
   if (substring == NULL) {
@@ -185,17 +163,13 @@ NumberVector search(Vector *vector, char **characters) {
     exit(EXIT_FAILURE);
   }
 
-  // Copy the substring into the allocated memory
   strncpy(substring, str + a, length);
 
-  // Null-terminate the result
   substring[length] = '\0';
 
-  printf("%s \n --- \n", substring);
+  // printf("%s \n --- \n", substring);
 
-  NumberVector v;
-
-  return v;
+  return atoi(substring);
 }
 
 void stripNewline(char *str) {
@@ -247,16 +221,16 @@ int main(void) {
   for (int y = 0; y < rows; y += 1) {
     for (int x = 0; x < cols; x += 1) {
       char c = characters[y][x];
-
       if (isSymbol(c)) {
         VectorArray va = createVectorArray(x, y);
         for (size_t j = 0; j < VECTOR_ARRAY_SIZE; j += 1) {
           Vector v = va.array[j];
-
           char s = characters[v.y][v.x];
-
           if (isNumber(s)) {
-            search(&v, characters);
+            int num = search(&v, characters, checked);
+            if (num != 0) {
+              printf("%d \n", num);
+            }
           }
         }
         freeVectorArray(&va);
