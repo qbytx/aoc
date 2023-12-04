@@ -167,7 +167,11 @@ int search(Vector *vector, char **characters, int **checked) {
 
   substring[length] = '\0';
 
-  return atoi(substring);
+  int result = atoi(substring);
+
+  free(substring);
+
+  return result;
 }
 
 void stripNewline(char *str) {
@@ -176,7 +180,7 @@ void stripNewline(char *str) {
 }
 
 int main(void) {
-  char *fileName = "./symbols_small.txt";
+  char *fileName = "./symbols.txt";
   FILE *fp = fopen(fileName, "r");
 
   if (fp == NULL) {
