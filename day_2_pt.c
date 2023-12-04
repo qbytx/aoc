@@ -148,10 +148,10 @@ int search(Vector *vector, char **characters, int **checked) {
     b++;
   }
 
-  if (isChecked(checked, a, b) == 1) {
+  if (isChecked(checked, a, vector->y) == 1) {
     return 0;
   } else {
-    setChecked(checked, a, b);
+    setChecked(checked, a, vector->y);
   }
 
   int length = b - a + 1;
@@ -166,8 +166,6 @@ int search(Vector *vector, char **characters, int **checked) {
   strncpy(substring, str + a, length);
 
   substring[length] = '\0';
-
-  // printf("%s \n --- \n", substring);
 
   return atoi(substring);
 }
@@ -225,11 +223,14 @@ int main(void) {
         VectorArray va = createVectorArray(x, y);
         for (size_t j = 0; j < VECTOR_ARRAY_SIZE; j += 1) {
           Vector v = va.array[j];
-          char s = characters[v.y][v.x];
-          if (isNumber(s)) {
-            int num = search(&v, characters, checked);
-            if (num != 0) {
-              printf("%d \n", num);
+          int vx, vy;
+          vx = v.x;
+          vy = v.y;
+          if (vx >= 0 && vy >= 0 && vx < cols && vy < rows) {
+            char s = characters[vy][vx];
+            if (isNumber(s)) {
+              int num = search(&v, characters, checked);
+              result += (long)num;
             }
           }
         }
@@ -245,7 +246,7 @@ int main(void) {
   free(characters);
   free(checked);
   freeList(&list);
-
   fclose(fp);
-  return 0;
+  printf("%ld \n", result);
+  return result;
 }
